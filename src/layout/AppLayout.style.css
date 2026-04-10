@@ -1,9 +1,15 @@
+/* 전체 레이아웃 */
 .layout {
   min-height: 100vh;
   background-color: #111;
   color: #fff;
 }
 
+main {
+  background-color: #111;
+}
+
+/* 헤더 영역 */
 .header {
   width: 100%;
   height: 62px;
@@ -19,6 +25,7 @@
   padding: 0 28px;
 }
 
+/* 헤더 왼쪽 영역 */
 .left {
   display: flex;
   align-items: center;
@@ -26,7 +33,7 @@
 }
 
 .logo {
-  color: #DFFF00;
+  color: #dfff00;
   font-size: 2rem;
   font-weight: 900;
   text-decoration: none;
@@ -34,6 +41,7 @@
   line-height: 1;
 }
 
+/* 네비게이션 */
 .nav {
   display: flex;
   align-items: center;
@@ -61,7 +69,7 @@
 }
 
 .nav-link.active {
-  color: #fff;
+  color: #dfff00;
   font-weight: 700;
 }
 
@@ -72,7 +80,7 @@
   bottom: 10px;
   width: 100%;
   height: 3px;
-  background-color: #fff;
+  background-color: #dfff00;
   border-radius: 999px;
 }
 
@@ -80,10 +88,11 @@
   padding: 20px 0;
 }
 
+/* 헤더 오른쪽 영역 */
 .right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .icon-btn {
@@ -97,8 +106,91 @@
   cursor: pointer;
 }
 
+/* 검색창 */
+.search-box {
+  display: flex;
+  align-items: center;
+}
+
+.search-pill {
+  display: flex;
+  align-items: center;
+  width: 36px;
+  height: 34px;
+  overflow: hidden;
+  box-sizing: border-box;
+  background: none;
+  border: 0.5px solid transparent;
+  border-radius: 20px;
+  transition:
+    width 0.25s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.search-pill.open {
+  width: 200px;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.search-input {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  padding: 0 0 0 0px;
+  transition: opacity 0.15s ease;
+  transition: padding 0.3s ease;
+}
+
+.search-pill.open .search-input {
+  padding: 0 0 0 14px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-pill:focus-within {
+  border-color: #dfff00;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+
+.search-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.search-pill.open:focus-within .search-btn {
+  color: #dfff00;
+}
+
+.search-btn:hover {
+  color: #fff;
+}
+
+/* 로그인 버튼 */
 .login-btn {
-  background-color: #DFFF00;
+  background-color: #dfff00;
   color: #000;
   border: none;
   border-radius: 6px;
@@ -110,53 +202,4 @@
 
 .login-btn:hover {
   opacity: 0.92;
-}
-
-main {
-  background-color: #111;
-}
-
-.right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.search-box {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.search-input {
-  width: 220px;
-  height: 36px;
-  padding: 0 12px;
-  border: 1px solid #444;
-  border-radius: 6px;
-  background-color: #111;
-  color: #fff;
-  outline: none;
-}
-
-.search-input::placeholder {
-  color: #999;
-}
-
-.search-input:focus {
-  border-color: #DFFF00;
-}
-
-.search-btn {
-  height: 36px;
-  padding: 0 14px;
-  border: none;
-  border-radius: 6px;
-  background-color: #222;
-  color: #fff;
-  cursor: pointer;
-}
-
-.search-btn:hover {
-  background-color: #333;
 }
