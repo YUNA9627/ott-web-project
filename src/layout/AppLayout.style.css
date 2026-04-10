@@ -138,20 +138,34 @@ main {
   justify-content: flex-end;
   align-items: center;
   width: 40px;
-  height: 34px;
+  height: 36px;
   overflow: hidden;
   box-sizing: border-box;
   background: none;
   border: 0.5px solid transparent;
   border-radius: 20px;
   margin-left: auto;
+  transition:
+    width 0.3s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .search-pill.open {
   width: 200px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.1);
   border: 0.5px solid rgba(255, 255, 255, 0.18);
   transition: border-color 0.3s ease;
+}
+
+.search-pill.open .search-input {
+  padding: 0 0 0 16px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.search-pill.open:focus-within {
+  border-color: #dfff00;
 }
 
 .search-input {
@@ -162,31 +176,25 @@ main {
   border: none;
   outline: none;
   color: #fff;
-  font-size: 0.85rem;
+  font-size: 1rem;
   opacity: 0;
   pointer-events: none;
   padding: 0 0 0 0px;
-  transition: opacity 0.15s ease;
-}
-
-.search-pill.open .search-input {
-  padding: 0 0 0 14px;
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.search-pill.open:focus-within {
-  border-color: #dfff00;
+  caret-color: #dfff00;
+  transition:
+    opacity 0.2s ease,
+    padding 0.3s ease;
 }
 
 .search-input::placeholder {
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.3);
 }
 
 .search-btn {
   flex-shrink: 0;
-  width: 40px;
-  height: 34px;
+  width: 42px;
+  height: 36px;
   padding: 0;
   border: none;
   background: transparent;
