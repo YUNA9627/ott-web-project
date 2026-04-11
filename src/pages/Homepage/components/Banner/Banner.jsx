@@ -26,6 +26,17 @@ const Banner = () => {
       <div className="banner-text-area">
         <h1>{data?.results[0].title}</h1>
         <p>{data?.results[0].overview}</p>
+        <div className="banner-buttons">
+          <button className="banner-btn play-btn">
+            <span className="btn-icon">▶</span>
+            재생
+          </button>
+
+          <button className="banner-btn info-btn">
+            <span className="btn-icon info-circle">i</span>
+            상세 정보
+          </button>
+        </div>
       </div>
     </div>
   );
