@@ -5,7 +5,7 @@ const fetchPopularMovies = () => {
   return api.get(`/movie/popular`);
 };
 
-export const usePopularMoivesQuery = () => {
+export const usePopularMoviesQuery = () => {
   return useQuery({
     queryKey: ["movie-popular"],
     queryFn: fetchPopularMovies,
