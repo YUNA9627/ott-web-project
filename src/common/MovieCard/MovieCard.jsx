@@ -35,11 +35,11 @@ const MovieCard = ({ movie }) => {
   };
 
   const getUsCertification = () => {
-    const usData = movieDetail?.release_dates?.results?.find(
-      (item) => item.iso_3166_1 === "US"
-    );
+    if (!movieDetail?.release_dates?.results) return "";
 
-    if (!movieDetail?.results) return "";
+    const usData = movieDetail.release_dates.results.find(
+      (item) => item.iso_3166_1 === "US",
+    );
 
     if (!usData?.release_dates?.length) return "";
 
@@ -95,7 +95,9 @@ const MovieCard = ({ movie }) => {
             <span className="info-year">{movie.release_date?.slice(0, 4)}</span>
           </div>
           <div className="info-item">
-            <span className="info-year">{movieDetail?.runtime ? `${movieDetail.runtime}분` : "-"}</span>
+            <span className="info-year">
+              {movieDetail?.runtime ? `${movieDetail.runtime}분` : "-"}
+            </span>
           </div>
         </div>
       </div>
