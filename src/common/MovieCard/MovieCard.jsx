@@ -1,18 +1,72 @@
 import React from "react";
+import axios from "axios";
 import "./MovieCard.style.css";
 import { useMovieGenreQuery } from "../../hooks/useMovieGenre";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchMovieCertification = async (movieId) => {
+  const response = await axios.get(
+    `https://api.themoviedb.org/3/movie/${movieId}?append_to_response=release_dates`,
+    {
+      headers: {
+        Authorization: `Bearer ${import.meta.env.VITE_APP_API_KEY}`,
+      },
+    },
+  );
+
+  return response.data;
+};
 
 const MovieCard = ({ movie }) => {
   const { data: genreData } = useMovieGenreQuery();
 
+  const { data: movieDetail } = useQuery({
+    queryKey: ["movie-certification", movie.id],
+    queryFn: () => fetchMovieCertification(movie.id),
+    staleTime: 1000 * 60 * 10,
+  });
+
   const showGenre = (genreIdList) => {
-    if(!genreData) return []
-    const genreNameList = genreIdList.map((id) => {
-      const genreObj = genreData.find((genre) => genre.id === id)
-      return genreObj.name;
-    })
-    return genreNameList
-  }
+    if (!genreData) return [];
+
+    return genreIdList
+      .map((id) => genreData.find((genre) => genre.id === id)?.name)
+      .filter(Boolean);
+  };
+
+  const getUsCertification = () => {
+    const usData = movieDetail?.release_dates?.results?.find(
+      (item) => item.iso_3166_1 === "US"
+    );
+
+    if (!movieDetail?.results) return "";
+
+    if (!usData?.release_dates?.length) return "";
+
+    const certificationItem = usData.release_dates.find(
+      (item) => item.certification && item.certification.trim() !== "",
+    );
+
+    return certificationItem?.certification || "";
+  };
+
+  const convertAgeBadge = (certification) => {
+    switch (certification) {
+      case "G":
+      case "PG":
+        return "ALL";
+      case "PG-13":
+        return "12";
+      case "R":
+        return "15";
+      case "NC-17":
+        return "19";
+      default:
+        return "ALL";
+    }
+  };
+
+  const ageBadge = convertAgeBadge(getUsCertification());
   return (
     <div
       style={{
@@ -20,32 +74,28 @@ const MovieCard = ({ movie }) => {
       }}
       className="movie-card"
     >
-      <div className={`age-badge ${movie.adult ? "adult" : "all"}`}>
-        {movie.adult ? "18+" : "ALL"}
-      </div>
-
       <div className="overlay">
+        <div className={`age age_${ageBadge}`}>{ageBadge}</div>
         <h1 className="movie-title">{movie.title}</h1>
 
         <div className="genre-list">
-          {showGenre(movie.genre_ids).map((id) => (
-            <span key={id} className="genre-badge">
-              {id}
+          {showGenre(movie.genre_ids).map((genre) => (
+            <span key={genre} className="genre-badge">
+              {genre}
             </span>
           ))}
         </div>
 
         <div className="info-list">
           <div className="info-item">
-            <span className="info-label">Score</span>
+            <span className="info-star">★</span>
             <span className="info-value">{movie.vote_average?.toFixed(1)}</span>
           </div>
-
           <div className="info-item">
-            <span className="info-label">Popularity</span>
-            <span className="info-value">
-              {Math.round(movie.popularity).toLocaleString()}
-            </span>
+            <span className="info-year">{movie.release_date?.slice(0, 4)}</span>
+          </div>
+          <div className="info-item">
+            <span className="info-year">{movieDetail?.runtime ? `${movieDetail.runtime}분` : "-"}</span>
           </div>
         </div>
       </div>
