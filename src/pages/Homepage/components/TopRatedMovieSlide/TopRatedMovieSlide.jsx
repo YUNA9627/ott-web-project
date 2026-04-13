@@ -18,7 +18,7 @@ const TopRatedMovieSlide = () => {
   return (
     <div>
       <MovieSlider
-        title="Popular Movies"
+        title="TopRated Movies"
         movies={data.results}
         responsive={responsive}
       />
