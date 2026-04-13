@@ -8,8 +8,8 @@ const Carousel = CarouselImport.default || CarouselImport;
 
 const MovieSlider = ({ title, movies, responsive }) => {
   return (
-    <div>
-      <h3>{title}</h3>
+    <div class="slide-wrap">
+      <h3 class="slide-title">{title}</h3>
       <Carousel
         infinite={true}
         itemClass="movie-slider p-1"
