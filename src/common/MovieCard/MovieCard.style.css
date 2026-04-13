@@ -47,7 +47,7 @@
 
 .movie-title {
   margin: 0;
-  font-size: 1.45rem;
+  font-size: 1.75rem;
   font-weight: 800;
   line-height: 1.12;
   letter-spacing: -0.03em;
@@ -76,7 +76,7 @@
 }
 
 .info-list {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
   gap: 6px;
 }
@@ -90,10 +90,15 @@
   line-height: 1;
 }
 
-.info-item:not(:first-child)::before {
-  content: "⦁";
-  padding-right: 4px;
-  color: #646464;
+.info-item + .info-item::before {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 4px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background-color: #646464;
+  flex-shrink: 0;
 }
 
 .info-star {
@@ -121,8 +126,8 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
@@ -153,6 +158,13 @@
 
 @media (max-width: 600px) {
   .movie-title {
-    font-size: 1.25rem;
+    font-size: 1.45rem;
+  }
+  .info-value, .info-year, .info-year {
+    font-size: 0.8rem;
+  }
+  .info-item + .info-item::before {
+    width: 3px;
+    height: 3px;
   }
 }
