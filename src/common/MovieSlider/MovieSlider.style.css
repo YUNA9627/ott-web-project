@@ -1,0 +1,54 @@
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  height: 360px;
+}
+
+.movie-slider {
+  display: flex;
+  justify-content: center;
+}
+
+/* 슬라이더 화살표 공통 */
+.carousel-container .react-multiple-carousel__arrow {
+  min-width: 52px;
+  min-height: 52px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  z-index: 20;
+  transition: all 0.25s ease;
+}
+
+/* hover */
+.carousel-container .react-multiple-carousel__arrow:hover {
+  background: #dfff00;
+  transform: scale(1.08);
+}
+
+/* 화살표 아이콘 */
+.carousel-container .react-multiple-carousel__arrow::before {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.carousel-container .react-multiple-carousel__arrow:hover::before {
+  color: #000;
+}
+
+/* 좌우 위치 */
+.carousel-container .react-multiple-carousel__arrow--left {
+  left: 12px;
+}
+
+.carousel-container .react-multiple-carousel__arrow--right {
+  right: 12px;
+}
+
+/* 비활성화 상태 */
+.carousel-container .react-multiple-carousel__arrow--disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
