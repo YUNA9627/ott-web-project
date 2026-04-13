@@ -155,17 +155,4 @@
   .movie-title {
     font-size: 1.25rem;
   }
-
-  .genre-badge {
-    font-size: 0.64rem;
-    padding: 0 9px;
-  }
-
-  .info-item {
-    padding: 7px 9px;
-  }
-
-  .info-value {
-    font-size: 0.82rem;
-  }
 }
