@@ -9,6 +9,33 @@
   justify-content: center;
 }
 
+.slide-wrap {
+  margin-bottom: 40px;
+}
+
+.slide-title {
+    position: relative;
+  margin: 0;
+  padding-left: 14px;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #f8fafc;
+}
+
+.slide-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 24px;
+  border-radius: 999px;
+  background: #dfff00;
+  transform: translateY(-50%);
+}
+
 /* 슬라이더 화살표 공통 */
 .carousel-container .react-multiple-carousel__arrow {
   min-width: 52px;
