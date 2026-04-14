@@ -231,6 +231,61 @@ main {
   opacity: 0.75;
 }
 
+/* Alert 디자인 */
+.global-alert-wrap {
+  position: fixed;
+  top: 62px;
+  left: 0;
+  width: 100%;
+  z-index: 1200;
+  padding: 12px 20px 0;
+  pointer-events: none;
+}
+
+.global-alert.alert {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(223, 255, 0, 0.28);
+  background: rgba(17, 17, 17, 0.96);
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+  animation: alert-slide-down 0.22s ease;
+}
+
+.global-alert.alert-warning {
+  background: rgba(17, 17, 17, 0.96);
+  color: #fff;
+}
+
+.global-alert::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  border-radius: 999px;
+  background: #dfff00;
+  vertical-align: middle;
+}
+
+@keyframes alert-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 1024px) {
   .header-inner {
     padding: 0 20px;
