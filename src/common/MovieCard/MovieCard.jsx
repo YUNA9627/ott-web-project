@@ -19,6 +19,7 @@ const fetchMovieCertification = async (movieId) => {
 
 const MovieCard = ({ movie }) => {
   const { data: genreData } = useMovieGenreQuery();
+  // console.log("장르 목록:", genreData);
 
   const { data: movieDetail } = useQuery({
     queryKey: ["movie-certification", movie.id],
