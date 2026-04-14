@@ -413,6 +413,9 @@ main {
   .right {
     gap: 8px;
     align-items: center;
+    display: flex;
+    justify-content: flex-end;
+    flex-basis: 100%;
   }
 
   .search-box {
@@ -426,7 +429,7 @@ main {
   }
 
   .search-pill.open {
-    width: 100%;
+    width: 240px;
   }
 
   .search-input {
@@ -486,14 +489,6 @@ main {
     padding: 6px 9px;
     font-size: 0.8rem;
     margin: 4px 0;
-  }
-
-  .search-box {
-    order: 2;
-    flex-basis: 100%;
-    width: 100%;
-    margin-top: 6px;
-    align-items: stretch;
   }
 
   .search-pill {
