@@ -452,6 +452,9 @@ main {
 @media (max-width: 360px) {
   .header-inner {
     padding: 10px;
+    row-gap: 10px;
+    display: flex;
+    align-items: flex-start;
   }
 
   .logo {
@@ -468,11 +471,35 @@ main {
   }
 
   .right {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
     gap: 6px;
+    width: auto;
+    min-width: fit-content;
+  }
+
+  .login-btn {
+    order: 1;
+    flex-shrink: 0;
+    padding: 6px 9px;
+    font-size: 0.8rem;
+    margin: 4px 0;
+  }
+
+  .search-box {
+    order: 2;
+    flex-basis: 100%;
+    width: 100%;
+    margin-top: 6px;
+    align-items: stretch;
   }
 
   .search-pill {
+    width: 36px;
     height: 32px;
+    margin-left: auto;
   }
 
   .search-pill.open {
@@ -481,6 +508,7 @@ main {
 
   .search-input {
     font-size: 0.86rem;
+    width: 70px;
   }
 
   .search-input::placeholder {
@@ -490,11 +518,6 @@ main {
   .search-btn {
     width: 36px;
     height: 32px;
-  }
-
-  .login-btn {
-    padding: 6px 9px;
-    font-size: 0.8rem;
   }
 }
 
@@ -508,4 +531,18 @@ main {
   margin: 6px 4px 0 0;
   font-size: 0.85rem;
   color: #ff6b6b;
+}
+
+@media (max-width: 360px) {
+  .global-alert-wrap {
+    top: 108px;
+    padding: 0 10px;
+  }
+
+  .global-alert.alert {
+    margin: 0;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    line-height: 1.3;
+  }
 }
