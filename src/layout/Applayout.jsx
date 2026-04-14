@@ -1,4 +1,4 @@
-import { Container } from "react-bootstrap";
+import { Alert, Container } from "react-bootstrap";
 import logo from "../assets/logo.svg";
 import "./AppLayout.style.css";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +15,8 @@ const AppLayout = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [globalAlert, setGlobalAlert] = useState("");
+
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -22,6 +24,20 @@ const AppLayout = () => {
       inputRef.current?.focus();
     }
   }, [searchOpen]);
+
+  useEffect(() => {
+    if (!globalAlert) return;
+
+    const timer = setTimeout(() => {
+      setGlobalAlert("");
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [globalAlert]);
+
+  const showGlobalAlert = (message) => {
+    setGlobalAlert(message);
+  };
 
   const handleOpenSearch = () => {
     setSearchOpen(true);
@@ -35,7 +51,6 @@ const AppLayout = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
 
-    // 검색창이 닫혀 있으면 열기
     if (!searchOpen) {
       setSearchOpen(true);
       return;
@@ -43,12 +58,7 @@ const AppLayout = () => {
 
     const trimQuery = searchQuery.trim();
 
-    // 빈값이면 검색 안 함
-    if (!trimQuery) return;
-
-    // url을 바꿔주기
-    navigate(`/movies?q=${trimQuery}`);
-    // 검색 완료되면 값 비우기
+    navigate(`/movies?q=${encodeURIComponent(trimQuery)}`);
     setSearchQuery("");
   };
 
@@ -97,8 +107,8 @@ const AppLayout = () => {
                   placeholder="제목, 장르, 인물 검색"
                   className="search-input"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={handleSearchKeyDown}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <button
                   type={searchOpen ? "submit" : "button"}
@@ -130,9 +140,18 @@ const AppLayout = () => {
           </div>
         </Container>
       </header>
+      {globalAlert && (
+        <div className="global-alert-wrap">
+          <Container fluid>
+            <Alert variant="danger" className="global-alert">
+              {globalAlert}
+            </Alert>
+          </Container>
+        </div>
+      )}
 
       <main>
-        <Outlet />
+        <Outlet context={{ showGlobalAlert }} />
       </main>
     </div>
   );
