@@ -126,7 +126,7 @@ main {
 
 /* 검색창 */
 .search-box {
-  width: 200px;
+  width: 240px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -152,7 +152,7 @@ main {
 }
 
 .search-pill.open {
-  width: 200px;
+  width: 240px;
   background: rgba(255, 255, 255, 0.1);
   border: 0.5px solid rgba(255, 255, 255, 0.18);
   transition: border-color 0.3s ease;
@@ -441,4 +441,16 @@ main {
     padding: 6px 9px;
     font-size: 0.8rem;
   }
+}
+
+.search-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.search-error {
+  margin: 6px 4px 0 0;
+  font-size: 0.85rem;
+  color: #ff6b6b;
 }
