@@ -131,11 +131,9 @@ const MoviePage = () => {
 
         <div className="movie-page-layout">
           <aside className="movie-filter">
-            <h3 className="filter-title">필터</h3>
+            <h3 className="filter-title">장르</h3>
 
             <div className="filter-group">
-              <span className="filter-label">장르</span>
-
               <div className="genre-button-list">
                 {genreList.map((item) => (
                   <button

@@ -53,11 +53,6 @@
   gap: 12px;
 }
 
-.filter-label {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
-}
-
 /* 버튼형 장르 필터 */
 .genre-button-list {
   display: flex;
