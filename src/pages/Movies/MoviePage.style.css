@@ -1,0 +1,168 @@
+.movie-page {
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  padding: 32px 20px 60px;
+}
+
+.movie-page-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.movie-page-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.movie-page-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.movie-page-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+/* 필터 박스 - 스크롤 고정 적용 */
+.movie-filter {
+  position: sticky;
+  top: 24px;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.filter-title {
+  margin: 0 0 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-label {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 버튼형 장르 필터 */
+.genre-button-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.genre-button {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+.genre-button:hover {
+  border-color: #dfff00;
+  color: #dfff00;
+}
+
+.genre-button:active {
+  transform: scale(0.97);
+}
+
+.genre-button.active {
+  background: #dfff00;
+  color: #000;
+  border-color: #dfff00;
+}
+
+.movie-content {
+  min-width: 0;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.movie-grid-item {
+  min-width: 0;
+}
+
+.movie-page-status.error {
+  color: #ff8b8b;
+}
+
+/* 페이지네이션 */
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+.wt-pagination {
+  list-style: none;
+  display: flex;
+  align-items: center;
+      justify-content: center;
+  gap: 2px;
+  padding: 0;
+  margin: 2rem 0;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.wt-page-item .wt-page-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+  background: transparent;
+  border: none;
+  border-bottom: 4px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.wt-page-item .wt-page-link:hover {
+  color: #fff;
+}
+
+.wt-page-item.active .wt-page-link {
+  color: #dfff00;
+  border-bottom-color: #dfff00;
+}
+
+.wt-page-item.disabled .wt-page-link {
+  opacity: 0.25;
+  cursor: default;
+  pointer-events: none;
+}
