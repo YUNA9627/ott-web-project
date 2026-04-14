@@ -16,14 +16,30 @@ const ReactPaginate = ReactPaginateModule.default ?? ReactPaginateModule;
 // 페이지네이션 클릭할 때마다 page 바꿔주기
 // page 값이 바뀔 때 마다 useSearchMovie에 page까지 넣어서 fetch
 const MoviePage = () => {
-  const [query] = useSearchParams();
+  const [query, setQuery] = useSearchParams();
   const [page, setPage] = useState(1);
+
   const keyword = query.get("q");
+    const genre = query.get("genre") || "";
 
   const { data, isLoading, isError, error } = useSearchMovieQuery({
     keyword,
+    genre,
     page,
   });
+
+  const updateFilter = (key, value) => {
+    const nextQuery = new URLSearchParams(query);
+
+    if (value) {
+      nextQuery.set(key, value);
+    } else {
+      nextQuery.delete(key);
+    }
+
+    setQuery(nextQuery);
+    setPage(1);
+  };
 
   const handlePageClick = ({ selected }) => {
     setPage(selected + 1);
@@ -42,6 +58,16 @@ const MoviePage = () => {
       <Row>
         <Col lg={4} xs={12}>
           필터
+          <select
+            value={genre}
+            onChange={(e) => updateFilter("genre", e.target.value)}
+          >
+            <option value="">전체 장르</option>
+            <option value="28">액션</option>
+            <option value="35">코미디</option>
+            <option value="18">드라마</option>
+            <option value="27">공포</option>
+          </select>
         </Col>
         <Col lg={8} xs={12}>
           <Row>
