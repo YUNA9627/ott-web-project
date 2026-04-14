@@ -1,8 +1,8 @@
 import { Container } from "react-bootstrap";
-import { Link, NavLink, Outlet } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import "./AppLayout.style.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 const menuList = [
   { label: "전체", path: "/" },
@@ -10,21 +10,59 @@ const menuList = [
 ];
 
 const AppLayout = () => {
+  const navigate = useNavigate();
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleSearchToggle = () => {
-    setSearchOpen((prev) => !prev);
-    if (searchOpen) setSearchQuery("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (searchOpen) {
+      inputRef.current?.focus();
+    }
+  }, [searchOpen]);
+
+  const handleOpenSearch = () => {
+    setSearchOpen(true);
+  };
+
+  const handleCloseSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery("");
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+
+    // 검색창이 닫혀 있으면 열기
+    if (!searchOpen) {
+      setSearchOpen(true);
+      return;
+    }
+
+    const trimQuery = searchQuery.trim();
+
+    // 빈값이면 검색 안 함
+    if (!trimQuery) return;
+
+    // url을 바꿔주기
+    navigate(`/movies?q=${trimQuery}`);
+    // 검색 완료되면 값 비우기
+    setSearchQuery("");
+  };
+
+  const handleSearchButtonClick = () => {
+    if (!searchOpen) {
+      handleOpenSearch();
+    }
   };
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Escape") {
-      setSearchOpen(false);
-      setSearchQuery("");
+      handleCloseSearch();
     }
   };
-
   return (
     <div className="layout">
       <header className="header">
@@ -51,9 +89,10 @@ const AppLayout = () => {
           </div>
 
           <div className="right">
-            <div className="search-box">
+            <form className="search-box" onSubmit={handleSearchSubmit}>
               <div className={`search-pill ${searchOpen ? "open" : ""}`}>
                 <input
+                  ref={inputRef}
                   type="text"
                   placeholder="제목, 장르, 인물 검색"
                   className="search-input"
@@ -62,9 +101,9 @@ const AppLayout = () => {
                   onKeyDown={handleSearchKeyDown}
                 />
                 <button
-                  type="button"
+                  type={searchOpen ? "submit" : "button"}
                   className="search-btn"
-                  onClick={handleSearchToggle}
+                  onClick={handleSearchButtonClick}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +122,7 @@ const AppLayout = () => {
                   </svg>
                 </button>
               </div>
-            </div>
+            </form>
 
             <button type="button" className="login-btn">
               로그인
