@@ -48,7 +48,11 @@ const MovieDetailPage = () => {
 
   const { data, isLoading, isError, error } = useMovieDetailQuery(id, language);
 
-  const { data: reviewData } = useMovieReviewsQuery(id, language, 1);
+  const {
+    data: reviewData,
+    isLoading: isReviewLoading,
+    isError: isReviewError,
+  } = useMovieReviewsQuery(id, language, 1);
 
   const toggleReview = (reviewId) => {
     setExpandedReviews((prev) => ({
@@ -183,7 +187,15 @@ const MovieDetailPage = () => {
               <div className="movie-detail-section">
                 <h3>리뷰</h3>
 
-                {reviews.length > 0 && (
+                {isReviewLoading && <p>리뷰 불러오는 중...</p>}
+
+                {isReviewError && <p>리뷰를 불러오지 못했습니다.</p>}
+
+                {!isReviewLoading && !isReviewError && reviews.length === 0 && (
+                  <p>등록된 리뷰가 없습니다.</p>
+                )}
+
+                {!isReviewLoading && !isReviewError && reviews.length > 0 && (
                   <div className="movie-detail-review-list">
                     {reviews.map((review) => {
                       const isExpanded = !!expandedReviews[review.id];
@@ -228,6 +240,7 @@ const MovieDetailPage = () => {
                   </div>
                 )}
               </div>
+              
             </div>
           </section>
         </div>
