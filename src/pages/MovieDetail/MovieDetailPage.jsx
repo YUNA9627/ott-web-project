@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import { useMovieDetailQuery } from "../../hooks/useMovieDetail";
+import { useMovieReviewsQuery } from "../../hooks/useMovieReviews";
 import { getUsCertification, convertAgeBadge } from "../../utils/movie";
 import "./MovieDetailPage.style.css";
 
@@ -42,7 +43,23 @@ const MovieDetailPage = () => {
   const { id } = useParams();
   const [language, setLanguage] = useState("ko-KR");
 
+  const [expandedReviews, setExpandedReviews] = useState({});
+  const REVIEW_PREVIEW_LENGTH = 200;
+
   const { data, isLoading, isError, error } = useMovieDetailQuery(id, language);
+
+  const {
+    data: reviewData,
+    isLoading: isReviewLoading,
+    isError: isReviewError,
+  } = useMovieReviewsQuery(id, language, 1);
+
+  const toggleReview = (reviewId) => {
+    setExpandedReviews((prev) => ({
+      ...prev,
+      [reviewId]: !prev[reviewId],
+    }));
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -57,6 +74,8 @@ const MovieDetailPage = () => {
   const director = data?.credits?.crew?.find(
     (person) => person.job === "Director",
   );
+
+  const reviews = reviewData?.results || [];
 
   return (
     <div className="movie-detail-page">
@@ -164,6 +183,64 @@ const MovieDetailPage = () => {
                   ))}
                 </div>
               </div>
+
+              <div className="movie-detail-section">
+                <h3>리뷰</h3>
+
+                {isReviewLoading && <p>리뷰 불러오는 중...</p>}
+
+                {isReviewError && <p>리뷰를 불러오지 못했습니다.</p>}
+
+                {!isReviewLoading && !isReviewError && reviews.length === 0 && (
+                  <p>등록된 리뷰가 없습니다.</p>
+                )}
+
+                {!isReviewLoading && !isReviewError && reviews.length > 0 && (
+                  <div className="movie-detail-review-list">
+                    {reviews.map((review) => {
+                      const isExpanded = !!expandedReviews[review.id];
+                      const isLongReview =
+                        (review.content?.length || 0) > REVIEW_PREVIEW_LENGTH;
+
+                      const reviewText =
+                        isExpanded || !isLongReview
+                          ? review.content
+                          : `${review.content.slice(0, REVIEW_PREVIEW_LENGTH)}...`;
+
+                      return (
+                        <div
+                          key={review.id}
+                          className="movie-detail-review-item"
+                        >
+                          <div className="movie-detail-review-top">
+                            <strong>{review.author || "익명"}</strong>
+                            <span>
+                              {review.author_details?.rating
+                                ? `★ ${review.author_details.rating}`
+                                : "평점 없음"}
+                            </span>
+                          </div>
+
+                          <p className="movie-detail-review-content">
+                            {reviewText}
+                          </p>
+
+                          {isLongReview && (
+                            <button
+                              type="button"
+                              className="movie-detail-review-more-btn"
+                              onClick={() => toggleReview(review.id)}
+                            >
+                              {isExpanded ? "접기" : "더보기"}
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              
             </div>
           </section>
         </div>
