@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Link, useOutletContext, useParams } from "react-router-dom";
+import YouTube from "react-youtube";
 import { useMovieDetailQuery } from "../../hooks/useMovieDetail";
 import { useMovieReviewsQuery } from "../../hooks/useMovieReviews";
+import { useMovieVideosQuery } from "../../hooks/useMovieVideos";
 import { getUsCertification, convertAgeBadge } from "../../utils/movie";
 import "./MovieDetailPage.style.css";
 
@@ -41,12 +43,18 @@ import "./MovieDetailPage.style.css";
 
 const MovieDetailPage = () => {
   const { id } = useParams();
+
+  const { showGlobalAlert } = useOutletContext(); // 글로벌 Alert
+
   const [language, setLanguage] = useState("ko-KR");
+
+  const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
   const [expandedReviews, setExpandedReviews] = useState({});
   const REVIEW_PREVIEW_LENGTH = 200;
 
   const { data, isLoading, isError, error } = useMovieDetailQuery(id, language);
+  const { data: videoData } = useMovieVideosQuery(id, language);
 
   const {
     data: reviewData,
@@ -59,6 +67,15 @@ const MovieDetailPage = () => {
       ...prev,
       [reviewId]: !prev[reviewId],
     }));
+  };
+
+  // 예고편 보기 버튼 클릭 함수
+  const handleTrailerClick = () => {
+    if (trailer) {
+      setIsTrailerOpen(true);
+    } else {
+      showGlobalAlert("등록된 예고편이 없습니다.");
+    }
   };
 
   if (isLoading) {
@@ -77,6 +94,20 @@ const MovieDetailPage = () => {
 
   const reviews = reviewData?.results || [];
 
+  const trailer =
+    videoData?.results?.find(
+      (video) => video.site === "YouTube" && video.type === "Trailer",
+    ) || videoData?.results?.find((video) => video.site === "YouTube");
+
+  const youtubeOpts = {
+    width: "100%",
+    height: "100%",
+    playerVars: {
+      autoplay: 1,
+      rel: 0,
+    },
+  };
+
   return (
     <div className="movie-detail-page">
       <div
@@ -87,6 +118,7 @@ const MovieDetailPage = () => {
             : "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.95))",
         }}
       >
+        
         <div className="movie-detail-inner">
           <Link to="/movies" className="movie-detail-back-link">
             ← 목록으로
@@ -240,11 +272,45 @@ const MovieDetailPage = () => {
                   </div>
                 )}
               </div>
-              
+
+              <div className="movie-detail-section">
+                <button
+                  type="button"
+                  className="movie-detail-trailer-btn"
+                  onClick={handleTrailerClick}
+                >
+                  예고편 보기
+                </button>
+              </div>
             </div>
           </section>
         </div>
       </div>
+
+      {isTrailerOpen && trailer && (
+        <div
+          className="trailer-modal-overlay"
+          onClick={() => setIsTrailerOpen(false)}
+        >
+          <div className="trailer-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="trailer-modal-close"
+              onClick={() => setIsTrailerOpen(false)}
+            >
+              ✕
+            </button>
+
+            <div className="trailer-player-wrap">
+              <YouTube
+                videoId={trailer.key}
+                opts={youtubeOpts}
+                className="trailer-player"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
