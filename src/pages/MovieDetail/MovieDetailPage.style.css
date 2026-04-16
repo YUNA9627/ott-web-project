@@ -109,14 +109,11 @@
 }
 
 .movie-detail-trailer-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 13px 18px;
-  background: #dfff00;
-  color: #000;
+  background: transparent;
+  color: #fff;
   font-weight: 800;
-  text-decoration: none;
+  border: none;
+  padding: 10px;
 }
 
 .detail-age {
@@ -170,4 +167,57 @@
   background: transparent;
   color: #fff;
   cursor: pointer;
+}
+
+.trailer-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9999;
+}
+
+.trailer-modal {
+  position: relative;
+  width: min(100%, 960px);
+  background: #111;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+.trailer-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.trailer-player-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #000;
+}
+
+.trailer-player {
+  position: absolute;
+  inset: 0;
+}
+
+.trailer-player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
