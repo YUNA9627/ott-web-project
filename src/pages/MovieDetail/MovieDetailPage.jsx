@@ -1,7 +1,155 @@
 import React from "react";
+import { Alert } from "react-bootstrap";
+import { Link, useParams } from "react-router-dom";
+import { useMovieDetailQuery } from "../../hooks/useMovieDetail";
+import "./MovieDetailPage.style.css";
+
+const getUsCertification = (movieDetail) => {
+  if (!movieDetail?.release_dates?.results) return "";
+
+  const usData = movieDetail.release_dates.results.find(
+    (item) => item.iso_3166_1 === "US",
+  );
+
+  if (!usData?.release_dates?.length) return "";
+
+  const certificationItem = usData.release_dates.find(
+    (item) => item.certification && item.certification.trim() !== "",
+  );
+
+  return certificationItem?.certification || "";
+};
+
+const convertAgeBadge = (certification) => {
+  switch (certification) {
+    case "G":
+    case "PG":
+      return "ALL";
+    case "PG-13":
+      return "12";
+    case "R":
+      return "15";
+    case "NC-17":
+      return "19";
+    default:
+      return "ALL";
+  }
+};
 
 const MovieDetailPage = () => {
-  return <div>MovieDetailPage</div>;
+  const { id } = useParams();
+  const { data, isLoading, isError, error } = useMovieDetailQuery(id);
+
+  if (isLoading) {
+    return <div className="movie-detail-loading">Loading...</div>;
+  }
+
+  if (isError) {
+    return <Alert variant="danger">{error.message}</Alert>;
+  }
+
+  const ageBadge = convertAgeBadge(getUsCertification(data));
+  const castList = data?.credits?.cast?.slice(0, 8) || [];
+  const director = data?.credits?.crew?.find(
+    (person) => person.job === "Director",
+  );
+
+  return (
+    <div className="movie-detail-page">
+      <div
+        className="movie-detail-backdrop"
+        style={{
+          backgroundImage: data?.backdrop_path
+            ? `linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.95)), url(https://image.tmdb.org/t/p/original${data.backdrop_path})`
+            : "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.95))",
+        }}
+      >
+        <div className="movie-detail-inner">
+          <Link to="/movies" className="movie-detail-back-link">
+            ← 목록으로
+          </Link>
+
+          <section className="movie-detail-main">
+            <div className="movie-detail-poster-wrap">
+              <img
+                className="movie-detail-poster"
+                src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
+              />
+            </div>
+
+            <div className="movie-detail-content">
+              <div className="movie-detail-top">
+                <span className={`detail-age age_${ageBadge}`}>{ageBadge}</span>
+                <h1 className="movie-detail-title">{data.title}</h1>
+                {data.tagline && (
+                  <p className="movie-detail-tagline">{data.tagline}</p>
+                )}
+              </div>
+
+              <div className="movie-detail-meta">
+                <span>평점 {data.vote_average?.toFixed(1) || "-"}</span>
+                <span>{data.release_date || "-"}</span>
+                <span>{data.runtime ? `${data.runtime}분` : "-"}</span>
+                <span>{data.status || "-"}</span>
+              </div>
+
+              <div className="movie-detail-genres">
+                {data.genres?.map((genre) => (
+                  <span key={genre.id} className="movie-detail-genre">
+                    {genre.name}
+                  </span>
+                ))}
+              </div>
+
+              <div className="movie-detail-section">
+                <h3>줄거리</h3>
+                <p>{data.overview || "줄거리 정보가 없습니다."}</p>
+              </div>
+
+              <div className="movie-detail-section">
+                <h3>기본 정보</h3>
+                <ul className="movie-detail-info-list">
+                  <li>
+                    <strong>원제</strong>
+                    <span>{data.original_title || "-"}</span>
+                  </li>
+                  <li>
+                    <strong>감독</strong>
+                    <span>{director?.name || "-"}</span>
+                  </li>
+                  <li>
+                    <strong>국가</strong>
+                    <span>
+                      {data.production_countries
+                        ?.map((v) => v.name)
+                        .join(", ") || "-"}
+                    </span>
+                  </li>
+                  <li>
+                    <strong>예산</strong>
+                    <span>
+                      {data.budget ? `$${data.budget.toLocaleString()}` : "-"}
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="movie-detail-section">
+                <h3>출연</h3>
+                <div className="movie-detail-cast-list">
+                  {castList.map((actor) => (
+                    <span key={actor.credit_id} className="movie-detail-cast">
+                      {actor.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default MovieDetailPage;
