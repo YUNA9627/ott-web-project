@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../utils/api";
 
-const fetchMovieDetail = async (movieId) => {
+const fetchMovieDetail = async (movieId, language) => {
   const response = await api.get(`/movie/${movieId}`, {
     params: {
-      // language: "ko-KR",
-      language: "US",
+      language,
       append_to_response: "videos,credits,release_dates",
     },
   });
@@ -13,10 +12,10 @@ const fetchMovieDetail = async (movieId) => {
   return response.data;
 };
 
-export const useMovieDetailQuery = (movieId) => {
+export const useMovieDetailQuery = (movieId, language) => {
   return useQuery({
-    queryKey: ["movie-detail", movieId],
-    queryFn: () => fetchMovieDetail(movieId),
+    queryKey: ["movie-detail", movieId, language],
+    queryFn: () => fetchMovieDetail(movieId, language),
     enabled: !!movieId,
     staleTime: 1000 * 60 * 10,
   });

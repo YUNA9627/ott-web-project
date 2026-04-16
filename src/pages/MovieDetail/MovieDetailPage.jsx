@@ -1,4 +1,5 @@
 import React from "react";
+import { useState } from "react";
 import { Alert } from "react-bootstrap";
 import { Link, useParams } from "react-router-dom";
 import { useMovieDetailQuery } from "../../hooks/useMovieDetail";
@@ -39,10 +40,12 @@ import "./MovieDetailPage.style.css";
 
 const MovieDetailPage = () => {
   const { id } = useParams();
-  const { data, isLoading, isError, error } = useMovieDetailQuery(id);
+  const [language, setLanguage] = useState("ko-KR");
+
+  const { data, isLoading, isError, error } = useMovieDetailQuery(id, language);
 
   if (isLoading) {
-    return <div className="movie-detail-loading">Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   if (isError) {
@@ -69,6 +72,23 @@ const MovieDetailPage = () => {
           <Link to="/movies" className="movie-detail-back-link">
             ← 목록으로
           </Link>
+
+          <div className="movie-language-toggle">
+            <button
+              type="button"
+              className={language === "ko-KR" ? "active" : ""}
+              onClick={() => setLanguage("ko-KR")}
+            >
+              한국어
+            </button>
+            <button
+              type="button"
+              className={language === "en-US" ? "active" : ""}
+              onClick={() => setLanguage("en-US")}
+            >
+              English
+            </button>
+          </div>
 
           <section className="movie-detail-main">
             <div className="movie-detail-poster-wrap">
