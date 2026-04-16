@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import "./MovieCard.style.css";
 import { useMovieGenreQuery } from "../../hooks/useMovieGenre";
+import { getUsCertification, convertAgeBadge } from "../../utils/movie";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -37,39 +38,39 @@ const MovieCard = ({ movie }) => {
       .filter(Boolean);
   };
 
-  const getUsCertification = () => {
-    if (!movieDetail?.release_dates?.results) return "";
+  // const getUsCertification = () => {
+  //   if (!movieDetail?.release_dates?.results) return "";
 
-    const usData = movieDetail.release_dates.results.find(
-      (item) => item.iso_3166_1 === "US",
-    );
+  //   const usData = movieDetail.release_dates.results.find(
+  //     (item) => item.iso_3166_1 === "US",
+  //   );
 
-    if (!usData?.release_dates?.length) return "";
+  //   if (!usData?.release_dates?.length) return "";
 
-    const certificationItem = usData.release_dates.find(
-      (item) => item.certification && item.certification.trim() !== "",
-    );
+  //   const certificationItem = usData.release_dates.find(
+  //     (item) => item.certification && item.certification.trim() !== "",
+  //   );
 
-    return certificationItem?.certification || "";
-  };
+  //   return certificationItem?.certification || "";
+  // };
 
-  const convertAgeBadge = (certification) => {
-    switch (certification) {
-      case "G":
-      case "PG":
-        return "ALL";
-      case "PG-13":
-        return "12";
-      case "R":
-        return "15";
-      case "NC-17":
-        return "19";
-      default:
-        return "ALL";
-    }
-  };
+  // const convertAgeBadge = (certification) => {
+  //   switch (certification) {
+  //     case "G":
+  //     case "PG":
+  //       return "ALL";
+  //     case "PG-13":
+  //       return "12";
+  //     case "R":
+  //       return "15";
+  //     case "NC-17":
+  //       return "19";
+  //     default:
+  //       return "ALL";
+  //   }
+  // };
 
-  const ageBadge = convertAgeBadge(getUsCertification());
+  const ageBadge = convertAgeBadge(getUsCertification(movieDetail));
 
   const handleMoveDetail = () => {
     navigate(`/movies/${movie.id}`);
