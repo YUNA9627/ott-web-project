@@ -90,7 +90,6 @@ const MovieDetailPage = () => {
                 <span>평점 {data.vote_average?.toFixed(1) || "-"}</span>
                 <span>{data.release_date || "-"}</span>
                 <span>{data.runtime ? `${data.runtime}분` : "-"}</span>
-                <span>{data.status || "-"}</span>
               </div>
 
               <div className="movie-detail-genres">
@@ -135,7 +134,7 @@ const MovieDetailPage = () => {
               </div>
 
               <div className="movie-detail-section">
-                <h3>출연</h3>
+                <h3>출연진</h3>
                 <div className="movie-detail-cast-list">
                   {castList.map((actor) => (
                     <span key={actor.credit_id} className="movie-detail-cast">
