@@ -149,3 +149,25 @@
   background: #e74c3c;
   color: #fff;
 }
+
+.movie-detail-review-list {
+  display: grid;
+  gap: 16px;
+}
+
+.movie-detail-review-item {
+  padding: 10px;
+}
+
+.movie-detail-review-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.movie-detail-review-more-btn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
