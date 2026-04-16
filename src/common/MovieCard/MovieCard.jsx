@@ -3,6 +3,7 @@ import axios from "axios";
 import "./MovieCard.style.css";
 import { useMovieGenreQuery } from "../../hooks/useMovieGenre";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 const fetchMovieCertification = async (movieId) => {
   const response = await axios.get(
@@ -18,6 +19,7 @@ const fetchMovieCertification = async (movieId) => {
 };
 
 const MovieCard = ({ movie }) => {
+  const navigate = useNavigate();
   const { data: genreData } = useMovieGenreQuery();
   // console.log("장르 목록:", genreData);
 
@@ -68,12 +70,20 @@ const MovieCard = ({ movie }) => {
   };
 
   const ageBadge = convertAgeBadge(getUsCertification());
+
+  const handleMoveDetail = () => {
+    navigate(`/movies/${movie.id}`);
+  };
+
   return (
     <div
       style={{
         backgroundImage: `url(https://www.themoviedb.org/t/p/w600_and_h900_bestv2${movie.poster_path})`,
       }}
       className="movie-card"
+      onClick={handleMoveDetail}
+      role="button"
+      tabIndex={0}
     >
       <div className="overlay">
         <div className={`age age_${ageBadge}`}>{ageBadge}</div>
