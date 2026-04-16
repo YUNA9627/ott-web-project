@@ -43,23 +43,12 @@
 }
 
 /* 오른쪽 상세 정보 영역 */
-.movie-detail-content {
-  padding-top: 8px;
-}
-
-.movie-detail-top {
-  margin-bottom: 20px;
-}
-
 .movie-detail-title {
-  margin: 14px 0 10px;
   font-size: 2.6rem;
   font-weight: 800;
-  line-height: 1.15;
 }
 
 .movie-detail-tagline {
-  margin: 0;
   color: rgba(255, 255, 255, 0.72);
   font-size: 1rem;
 }
@@ -68,20 +57,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 18px;
 }
 
 .movie-detail-meta span {
-  padding: 8px 12px;
-  border-radius: 999px;
   font-size: 0.95rem;
 }
 
 .movie-detail-genres {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 28px;
 }
 
 .movie-detail-genre {
@@ -91,7 +75,6 @@
 }
 
 .movie-detail-section h3 {
-  margin-bottom: 12px;
   font-size: 1.1rem;
   font-weight: 800;
 }
@@ -130,7 +113,6 @@
   align-items: center;
   justify-content: center;
   padding: 13px 18px;
-  border-radius: 12px;
   background: #dfff00;
   color: #000;
   font-weight: 800;
