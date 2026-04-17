@@ -1,7 +1,9 @@
 .movie-card {
   position: relative;
-  width: 220px;
-  height: 330px;
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 220 / 330;
+  height: auto;
   border-radius: 16px;
   background-size: cover;
   background-position: center;
