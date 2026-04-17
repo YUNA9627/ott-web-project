@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
-import { Link, useOutletContext, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import YouTube from "react-youtube";
 import { useMovieDetailQuery } from "../../hooks/useMovieDetail";
 import { useMovieReviewsQuery } from "../../hooks/useMovieReviews";
@@ -44,8 +44,6 @@ import "./MovieDetailPage.style.css";
 const MovieDetailPage = () => {
   const { id } = useParams();
 
-  const { showGlobalAlert } = useOutletContext(); // 글로벌 Alert
-
   const [language, setLanguage] = useState("ko-KR");
 
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
@@ -73,8 +71,6 @@ const MovieDetailPage = () => {
   const handleTrailerClick = () => {
     if (trailer) {
       setIsTrailerOpen(true);
-    } else {
-      showGlobalAlert("등록된 예고편이 없습니다.");
     }
   };
 
@@ -93,6 +89,7 @@ const MovieDetailPage = () => {
   );
 
   const reviews = reviewData?.results || [];
+  const totalReviewCount = reviewData?.total_results || 0;
 
   const trailer =
     videoData?.results?.find(
@@ -118,27 +115,28 @@ const MovieDetailPage = () => {
             : "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.95))",
         }}
       >
-        
         <div className="movie-detail-inner">
-          <Link to="/movies" className="movie-detail-back-link">
-            ← 목록으로
-          </Link>
+          <div className="top-section">
+            <Link to="/movies" className="movie-detail-back-link">
+              ← 목록으로
+            </Link>
 
-          <div className="movie-language-toggle">
-            <button
-              type="button"
-              className={language === "ko-KR" ? "active" : ""}
-              onClick={() => setLanguage("ko-KR")}
-            >
-              한국어
-            </button>
-            <button
-              type="button"
-              className={language === "en-US" ? "active" : ""}
-              onClick={() => setLanguage("en-US")}
-            >
-              English
-            </button>
+            <div className="movie-language-toggle">
+              <button
+                type="button"
+                className={language === "ko-KR" ? "active" : ""}
+                onClick={() => setLanguage("ko-KR")}
+              >
+                한국어
+              </button>
+              <button
+                type="button"
+                className={language === "en-US" ? "active" : ""}
+                onClick={() => setLanguage("en-US")}
+              >
+                English
+              </button>
+            </div>
           </div>
 
           <section className="movie-detail-main">
@@ -159,9 +157,27 @@ const MovieDetailPage = () => {
               </div>
 
               <div className="movie-detail-meta">
-                <span>평점 {data.vote_average?.toFixed(1) || "-"}</span>
-                <span>{data.release_date || "-"}</span>
-                <span>{data.runtime ? `${data.runtime}분` : "-"}</span>
+                <div className="movie-detail-rating">
+                  <div className="rating-info">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="38"
+                      height="38"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M11.3 2.61a.75.75 0 0 1 1.35 0l2.72 5.52a.3.3 0 0 0 .19.14l6.09.88a.75.75 0 0 1 .41 1.28l-4.4 4.3a.3.3 0 0 0-.08.21l1.05 6.07a.75.75 0 0 1-1.1.79l-5.44-2.86a.3.3 0 0 0-.23 0L6.4 21.8a.75.75 0 0 1-1.09-.79l1.04-6.06a.3.3 0 0 0-.07-.22l-4.4-4.3a.75.75 0 0 1 .41-1.28l6.1-.88a.3.3 0 0 0 .18-.14z"
+                      ></path>
+                    </svg>
+                    <div className="rating-number">
+                      <span>{data.vote_average?.toFixed(1) || "-"}</span>
+                      <span class="full-rating">/ 10</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="movie-detail-genres">
@@ -173,6 +189,17 @@ const MovieDetailPage = () => {
               </div>
 
               <div className="movie-detail-section">
+                <button
+                  type="button"
+                  className="movie-detail-trailer-btn"
+                  onClick={handleTrailerClick}
+                  disabled={!trailer}
+                >
+                  예고편 보기
+                </button>
+              </div>
+
+              <div className="movie-detail-section">
                 <h3>줄거리</h3>
                 <p>{data.overview || "줄거리 정보가 없습니다."}</p>
               </div>
@@ -180,6 +207,14 @@ const MovieDetailPage = () => {
               <div className="movie-detail-section">
                 <h3>기본 정보</h3>
                 <ul className="movie-detail-info-list">
+                  <li>
+                    <strong>제작 연도</strong>
+                    <span>{data.release_date || "-"}</span>
+                  </li>
+                  <li>
+                    <strong>상영 시간</strong>
+                    <span>{data.runtime ? `${data.runtime}분` : "-"}</span>
+                  </li>
                   <li>
                     <strong>원제</strong>
                     <span>{data.original_title || "-"}</span>
@@ -217,14 +252,21 @@ const MovieDetailPage = () => {
               </div>
 
               <div className="movie-detail-section">
-                <h3>리뷰</h3>
+                <div className="review-count">
+                  <h3>리뷰</h3>
+                  <span>{totalReviewCount}개</span>
+                </div>
 
                 {isReviewLoading && <p>리뷰 불러오는 중...</p>}
 
                 {isReviewError && <p>리뷰를 불러오지 못했습니다.</p>}
 
                 {!isReviewLoading && !isReviewError && reviews.length === 0 && (
-                  <p>등록된 리뷰가 없습니다.</p>
+                  <div className="movie-detail-review-empty simple">
+                    <p className="movie-detail-review-empty-title">
+                      등록된 리뷰가 없습니다.
+                    </p>
+                  </div>
                 )}
 
                 {!isReviewLoading && !isReviewError && reviews.length > 0 && (
@@ -271,16 +313,6 @@ const MovieDetailPage = () => {
                     })}
                   </div>
                 )}
-              </div>
-
-              <div className="movie-detail-section">
-                <button
-                  type="button"
-                  className="movie-detail-trailer-btn"
-                  onClick={handleTrailerClick}
-                >
-                  예고편 보기
-                </button>
               </div>
             </div>
           </section>
