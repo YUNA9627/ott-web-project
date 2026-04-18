@@ -321,6 +321,39 @@
   line-height: 1.6;
 }
 
+.movie-detail-review-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20px;
+  margin-top: 16px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #dfff00;
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+
+.movie-detail-review-toggle-btn:hover {
+  opacity: 0.85;
+}
+
+.movie-detail-review-toggle-btn:active {
+  transform: translateY(1px);
+}
+
+.movie-detail-review-toggle-btn:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* 예고편 보기 */
 .movie-detail-trailer-btn {
   display: inline-flex;
@@ -701,6 +734,11 @@
     font-size: 0.86rem;
   }
 
+  .movie-detail-review-toggle-btn {
+    margin-top: 12px;
+    font-size: 0.86rem;
+  }
+
   .movie-language-toggle {
     gap: 6px;
     margin-bottom: 18px;
@@ -962,6 +1000,10 @@
   }
 
   .movie-detail-review-more-btn {
+    font-size: 0.8rem;
+  }
+
+  .movie-detail-review-toggle-btn {
     font-size: 0.8rem;
   }
 
