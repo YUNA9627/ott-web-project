@@ -48,17 +48,9 @@ const MovieDetailPage = () => {
 
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [expandedReviews, setExpandedReviews] = useState({});
-  const REVIEW_PREVIEW_LENGTH = 200;
-
-  const { data, isLoading, isError, error } = useMovieDetailQuery(id, language);
-  const { data: videoData } = useMovieVideosQuery(id, language);
-
-  const {
-    data: reviewData,
-    isLoading: isReviewLoading,
-    isError: isReviewError,
-  } = useMovieReviewsQuery(id, language, 1);
+  const REVIEW_PREVIEW_LENGTH = 100;
 
   const toggleReview = (reviewId) => {
     setExpandedReviews((prev) => ({
@@ -66,6 +58,20 @@ const MovieDetailPage = () => {
       [reviewId]: !prev[reviewId],
     }));
   };
+
+  const {
+    data: reviewData,
+    isLoading: isReviewLoading,
+    isError: isReviewError,
+  } = useMovieReviewsQuery(id, language, 1);
+
+  const reviews = reviewData?.results || [];
+  const totalReviewCount = reviewData?.total_results || 0;
+  const visibleReviews = showAllReviews ? reviews : reviews.slice(0, 3);
+  const hasMoreThanThreeReviews = reviews.length > 3;
+
+  const { data, isLoading, isError, error } = useMovieDetailQuery(id, language);
+  const { data: videoData } = useMovieVideosQuery(id, language);
 
   // 예고편 보기 버튼 클릭 함수
   const handleTrailerClick = () => {
@@ -87,9 +93,6 @@ const MovieDetailPage = () => {
   const director = data?.credits?.crew?.find(
     (person) => person.job === "Director",
   );
-
-  const reviews = reviewData?.results || [];
-  const totalReviewCount = reviewData?.total_results || 0;
 
   const trailer =
     videoData?.results?.find(
@@ -174,7 +177,7 @@ const MovieDetailPage = () => {
                     </svg>
                     <div className="rating-number">
                       <span>{data.vote_average?.toFixed(1) || "-"}</span>
-                      <span class="full-rating">/ 10</span>
+                      <span className="full-rating">/ 10</span>
                     </div>
                   </div>
                 </div>
@@ -270,48 +273,61 @@ const MovieDetailPage = () => {
                 )}
 
                 {!isReviewLoading && !isReviewError && reviews.length > 0 && (
-                  <div className="movie-detail-review-list">
-                    {reviews.map((review) => {
-                      const isExpanded = !!expandedReviews[review.id];
-                      const isLongReview =
-                        (review.content?.length || 0) > REVIEW_PREVIEW_LENGTH;
+                  <>
+                    <div className="movie-detail-review-list">
+                      {visibleReviews.map((review) => {
+                        const isExpanded = !!expandedReviews[review.id];
+                        const isLongReview =
+                          (review.content?.length || 0) > REVIEW_PREVIEW_LENGTH;
 
-                      const reviewText =
-                        isExpanded || !isLongReview
-                          ? review.content
-                          : `${review.content.slice(0, REVIEW_PREVIEW_LENGTH)}...`;
+                        const reviewText =
+                          isExpanded || !isLongReview
+                            ? review.content
+                            : `${review.content.slice(0, REVIEW_PREVIEW_LENGTH)}...`;
 
-                      return (
-                        <div
-                          key={review.id}
-                          className="movie-detail-review-item"
-                        >
-                          <div className="movie-detail-review-top">
-                            <strong>{review.author || "익명"}</strong>
-                            <span>
-                              {review.author_details?.rating
-                                ? `★ ${review.author_details.rating}`
-                                : "평점 없음"}
-                            </span>
+                        return (
+                          <div
+                            key={review.id}
+                            className="movie-detail-review-item"
+                          >
+                            <div className="movie-detail-review-top">
+                              <strong>{review.author || "익명"}</strong>
+                              <span>
+                                {review.author_details?.rating
+                                  ? `★ ${review.author_details.rating}`
+                                  : "평점 없음"}
+                              </span>
+                            </div>
+
+                            <p className="movie-detail-review-content">
+                              {reviewText}
+                            </p>
+
+                            {isLongReview && (
+                              <button
+                                type="button"
+                                className="movie-detail-review-more-btn"
+                                onClick={() => toggleReview(review.id)}
+                              >
+                                {isExpanded ? "접기" : "더보기"}
+                              </button>
+                            )}
                           </div>
-
-                          <p className="movie-detail-review-content">
-                            {reviewText}
-                          </p>
-
-                          {isLongReview && (
-                            <button
-                              type="button"
-                              className="movie-detail-review-more-btn"
-                              onClick={() => toggleReview(review.id)}
-                            >
-                              {isExpanded ? "접기" : "더보기"}
-                            </button>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                        );
+                      })}
+                    </div>
+                    {hasMoreThanThreeReviews && (
+                      <button
+                        type="button"
+                        className="movie-detail-review-toggle-btn"
+                        onClick={() => setShowAllReviews((prev) => !prev)}
+                      >
+                        {showAllReviews
+                          ? "리뷰 접기"
+                          : `리뷰 ${reviews.length - 3}개 더보기`}
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
