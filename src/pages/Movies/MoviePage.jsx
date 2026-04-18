@@ -25,11 +25,13 @@ const MoviePage = () => {
 
   const keyword = query.get("q");
   const genre = query.get("genre") || "";
+  const sortBy = query.get("sort") || "popularity.desc";
   const hasGenreSelected = !!query.get("genre");
 
   const { data, isLoading, isError, error } = useSearchMovieQuery({
     keyword,
     genre,
+    sortBy,
     page,
   });
 
@@ -71,6 +73,14 @@ const MoviePage = () => {
     { label: "스릴러", value: "53" },
     { label: "전쟁", value: "10752" },
     { label: "서부", value: "37" },
+  ];
+
+  const sortOptions = [
+    { label: "인기 높은 순", value: "popularity.desc" },
+    { label: "인기 낮은 순", value: "popularity.asc" },
+    { label: "최신 개봉 순", value: "primary_release_date.desc" },
+    { label: "오래된 개봉 순", value: "primary_release_date.asc" },
+    { label: "평점 높은 순", value: "vote_average.desc" },
   ];
 
   const hasNoResults =
@@ -149,6 +159,22 @@ const MoviePage = () => {
                 ))}
               </div>
             </div>
+
+            <div className="filter-group sort-filter-group">
+              <h3 className="filter-title">정렬</h3>
+              <select
+                className="sort-select"
+                value={sortBy}
+                onChange={(e) => updateFilter("sort", e.target.value)}
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
           </aside>
 
           <section className="movie-content">

@@ -1,85 +1,182 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "../utils/api";
 
-// 영화 검색/필터 데이터를 가져오는 함수
-const fetchSearchMovie = async ({ keyword, genre, page }) => {
-  // 1) 검색어와 장르가 둘 다 있는 경우
-  // search/movie는 장르 필터를 직접 지원하지 않아서
-  // 검색 결과 여러 페이지를 가져온 뒤 프론트에서 장르 필터링
-  if (keyword && genre) {
-    // 먼저 1페이지를 호출해서 전체 페이지 수 확인
-    const firstRes = await api.get(
-      `/search/movie?query=${encodeURIComponent(keyword)}&page=1`
+// 검색 결과 여러 페이지 가져오기
+const fetchAllSearchResults = async (keyword) => {
+  const firstRes = await api.get("/search/movie", {
+    params: {
+      query: keyword,
+      page: 1,
+    },
+  });
+
+  const totalPages = Math.min(firstRes.data.total_pages, 20);
+
+  const requests = [];
+  for (let i = 1; i <= totalPages; i++) {
+    requests.push(
+      api.get("/search/movie", {
+        params: {
+          query: keyword,
+          page: i,
+        },
+      })
     );
+  }
 
-    const totalPages = Math.min(firstRes.data.total_pages, 20);
+  const responses = await Promise.all(requests);
+  return responses.flatMap((res) => res.data.results);
+};
 
-    const requests = [];
+// 프론트 정렬 함수
+const sortMovies = (movies, sortBy) => {
+  if (!sortBy) return movies;
 
-    // 1페이지부터 totalPages까지 검색 결과 요청 배열 만들기
-    for (let i = 1; i <= totalPages; i++) {
-      requests.push(
-        api.get(`/search/movie?query=${encodeURIComponent(keyword)}&page=${i}`)
+  const sorted = [...movies];
+
+  switch (sortBy) {
+    case "popularity.desc":
+      return sorted.sort((a, b) => b.popularity - a.popularity);
+
+    case "popularity.asc":
+      return sorted.sort((a, b) => a.popularity - b.popularity);
+
+    case "primary_release_date.desc":
+      return sorted.sort(
+        (a, b) =>
+          new Date(b.release_date || "1900-01-01") -
+          new Date(a.release_date || "1900-01-01")
       );
-    }
 
-    // 여러 페이지 요청을 동시에 실행
-    const responses = await Promise.all(requests);
+    case "primary_release_date.asc":
+      return sorted.sort(
+        (a, b) =>
+          new Date(a.release_date || "1900-01-01") -
+          new Date(b.release_date || "1900-01-01")
+      );
 
-    // 각 페이지의 results를 하나의 배열로 합치기
-    const allResults = responses.flatMap((res) => res.data.results);
+    case "vote_average.desc":
+      return sorted.sort((a, b) => b.vote_average - a.vote_average);
 
-    // 합쳐진 검색 결과 중에서
-    // 선택한 장르를 포함하는 영화만 필터링
+    case "vote_average.asc":
+      return sorted.sort((a, b) => a.vote_average - b.vote_average);
+
+    case "title.asc":
+      return sorted.sort((a, b) => a.title.localeCompare(b.title));
+
+    case "title.desc":
+      return sorted.sort((a, b) => b.title.localeCompare(a.title));
+
+    default:
+      return movies;
+  }
+};
+
+// 프론트 페이지네이션
+const paginateMovies = (movies, page, pageSize = 20) => {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+
+  return {
+    results: movies.slice(start, end),
+    total_results: movies.length,
+    total_pages: Math.ceil(movies.length / pageSize),
+    page,
+  };
+};
+
+// 영화 검색/필터 데이터 가져오기
+const fetchSearchMovie = async ({ keyword, genre, sortBy, page }) => {
+  // 1) 검색어 + 장르 + 정렬
+  if (keyword && genre && sortBy) {
+    const allResults = await fetchAllSearchResults(keyword);
+
     const filteredResults = allResults.filter((movie) =>
       movie.genre_ids.includes(Number(genre))
     );
 
-    // 프론트에서 직접 페이지네이션 처리
-    // 한 페이지에 20개씩 보여주기
-    const pageSize = 20;
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
+    const sortedResults = sortMovies(filteredResults, sortBy);
 
-    // 현재 페이지에 맞는 결과만 잘라서 반환
-    return {
-      results: filteredResults.slice(start, end),
-      total_results: filteredResults.length,
-      total_pages: Math.ceil(filteredResults.length / pageSize),
-    };
+    return paginateMovies(sortedResults, page);
   }
 
-  // 2) 검색어만 있는 경우
-  // TMDB search/movie API 사용
+  // 2) 정렬만 있는 경우
+  if (!keyword && !genre && sortBy) {
+    const res = await api.get("/discover/movie", {
+      params: {
+        sort_by: sortBy,
+        page,
+      },
+    });
+    return res.data;
+  }
+
+  // 3) 검색어 + 정렬
+  if (keyword && !genre && sortBy) {
+    const allResults = await fetchAllSearchResults(keyword);
+    const sortedResults = sortMovies(allResults, sortBy);
+
+    return paginateMovies(sortedResults, page);
+  }
+
+  // 4) 장르 + 정렬
+  if (!keyword && genre && sortBy) {
+    const res = await api.get("/discover/movie", {
+      params: {
+        with_genres: genre,
+        sort_by: sortBy,
+        page,
+      },
+    });
+    return res.data;
+  }
+
+  // 5) 검색어 + 장르
+  if (keyword && genre) {
+    const allResults = await fetchAllSearchResults(keyword);
+
+    const filteredResults = allResults.filter((movie) =>
+      movie.genre_ids.includes(Number(genre))
+    );
+
+    return paginateMovies(filteredResults, page);
+  }
+
+  // 6) 검색어만 있는 경우
   if (keyword) {
-    const res = await api.get(
-      `/search/movie?query=${encodeURIComponent(keyword)}&page=${page}`
-    );
+    const res = await api.get("/search/movie", {
+      params: {
+        query: keyword,
+        page,
+      },
+    });
     return res.data;
   }
 
-  // 3) 장르만 있는 경우
-  // TMDB discover/movie API로 장르 필터링
+  // 7) 장르만 있는 경우
   if (genre) {
-    const res = await api.get(
-      `/discover/movie?with_genres=${genre}&page=${page}`
-    );
+    const res = await api.get("/discover/movie", {
+      params: {
+        with_genres: genre,
+        page,
+      },
+    });
     return res.data;
   }
 
-  // 4) 검색어도 장르도 없으면
-  // 인기 영화 목록 가져오기
-  const res = await api.get(`/movie/popular?page=${page}`);
+  // 8) 아무 조건도 없으면 인기 영화
+  const res = await api.get("/movie/popular", {
+    params: {
+      page,
+    },
+  });
   return res.data;
 };
 
 // React Query 훅
-export const useSearchMovieQuery = ({ keyword, genre, page }) => {
+export const useSearchMovieQuery = ({ keyword, genre, sortBy, page }) => {
   return useQuery({
-    // keyword, genre, page 값이 바뀔 때마다 다시 요청하도록 설정
-    queryKey: ["movie-search", keyword, genre, page],
-
-    // 실제 데이터를 가져오는 함수
-    queryFn: () => fetchSearchMovie({ keyword, genre, page }),
+    queryKey: ["movie-search", keyword, genre, sortBy, page],
+    queryFn: () => fetchSearchMovie({ keyword, genre, sortBy, page }),
   });
 };
